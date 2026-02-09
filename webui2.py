@@ -3,13 +3,31 @@ import json
 import os
 from datetime import datetime
 import hashlib
+from ganti_password import ganti_password
+from converter import json_to_csv, csv_to_json, load_csv, save_csv
 
 
-FOLDER_DB = "database"
-FILE_BUKU = os.path.join(FOLDER_DB, "buku.json")
-FILE_ANGGOTA = os.path.join(FOLDER_DB, "anggota.json")
-FILE_PINJAM = os.path.join(FOLDER_DB, "peminjaman.json")
-FILE_LOG_HAPUS = os.path.join(FOLDER_DB, "log_hapus_buku.json")
+def load_variabel():
+    """Load variabel dari file variabel.txt"""
+    variabel = {}
+    if not os.path.exists("variabel.txt"):
+        st.error("variabel.txt tidak ditemukan!")
+        st.stop()
+    
+    with open("variabel.txt", "r") as f:
+        for line in f:
+            if "=" in line and not line.strip().startswith("#"):
+                key, value = line.strip().split("=", 1)
+                variabel[key.strip()] = value.strip()
+    return variabel
+
+
+var = load_variabel()
+FOLDER_DB = var.get("FOLDER_DB", "database")
+FILE_BUKU = var.get("FILE_BUKU", "database/buku.csv")
+FILE_ANGGOTA = var.get("FILE_ANGGOTA", "database/anggota.csv")
+FILE_PINJAM = var.get("FILE_PINJAM", "database/peminjaman.csv")
+FILE_LOG_HAPUS = var.get("FILE_LOG_HAPUS", "database/log_hapus_buku.csv")
 
 def load_config():
     config = {}
@@ -57,13 +75,23 @@ def now():
 def load_data(file):
     if not os.path.exists(file):
         return []
-    with open(file, "r") as f:
-        return json.load(f)
+    # Jika file CSV
+    if file.endswith('.csv'):
+        return load_csv(file)
+    # Jika file JSON (backward compatibility)
+    else:
+        with open(file, "r") as f:
+            return json.load(f)
 
 
 def save_data(file, data):
-    with open(file, "w") as f:
-        json.dump(data, f, indent=4)
+    # Jika file CSV
+    if file.endswith('.csv'):
+        save_csv(file, data)
+    # Jika file JSON (backward compatibility)
+    else:
+        with open(file, "w") as f:
+            json.dump(data, f, indent=4)
 
 
 st.title("📚 Sistem Perpustakaan")
@@ -76,7 +104,9 @@ menu = st.sidebar.selectbox("Menu", [
     "Pinjam Buku",
     "Kembalikan Buku",
     "Data Peminjaman",
-    "Log Hapus Buku"
+    "Log Hapus Buku",
+    "Ganti Password",
+    "JSON to CSV"
 ])
 
 # ================= TAMBAH BUKU =================
@@ -109,7 +139,7 @@ if menu == "Tambah Buku":
 elif menu == "Daftar Buku":
     st.header("Daftar Buku")
     data = load_data(FILE_BUKU)
-    st.json(data)
+    st.dataframe(data)
 
 # ================= TAMBAH SISWA =================
 elif menu == "Tambah Siswa":
@@ -138,7 +168,7 @@ elif menu == "Tambah Siswa":
 elif menu == "Daftar Siswa":
     st.header("Daftar Siswa")
     data = load_data(FILE_ANGGOTA)
-    st.json(data)
+    st.dataframe(data)
 
 # ================= PINJAM =================
 elif menu == "Pinjam Buku":
@@ -205,9 +235,72 @@ elif menu == "Kembalikan Buku":
 # ================= DATA PEMINJAMAN =================
 elif menu == "Data Peminjaman":
     st.header("Semua Transaksi")
-    st.json(load_data(FILE_PINJAM))
+    st.dataframe(load_data(FILE_PINJAM))
 
 # ================= LOG HAPUS =================
 elif menu == "Log Hapus Buku":
     st.header("Log Penghapusan Buku")
-    st.json(load_data(FILE_LOG_HAPUS))
+    st.dataframe(load_data(FILE_LOG_HAPUS))
+
+# ================= GANTI PASSWORD =================
+elif menu == "Ganti Password":
+    st.header("🔐 Ganti Password")
+    
+    password_lama = st.text_input("Password Lama", type="password")
+    password_baru = st.text_input("Password Baru", type="password")
+    password_confirm = st.text_input("Konfirmasi Password Baru", type="password")
+    
+    if st.button("Ganti Password"):
+        success, message = ganti_password(password_lama, password_baru, password_confirm)
+        if success:
+            st.success(message)
+        else:
+            st.error(message)
+
+# ================= JSON TO CSV =================
+elif menu == "JSON to CSV":
+    st.header("📊 Convert JSON ke CSV")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📥 JSON to CSV")
+        json_files = {
+            "Buku": os.path.join(FOLDER_DB, "buku.json"),
+            "Anggota": os.path.join(FOLDER_DB, "anggota.json"),
+            "Peminjaman": os.path.join(FOLDER_DB, "peminjaman.json"),
+            "Log Hapus Buku": os.path.join(FOLDER_DB, "log_hapus_buku.json")
+        }
+        
+        pilih_json = st.selectbox("Pilih File JSON", list(json_files.keys()))
+        
+        if st.button("Convert ke CSV"):
+            json_path = json_files[pilih_json]
+            csv_path = json_path.replace(".json", ".csv")
+            
+            success, message = json_to_csv(json_path, csv_path)
+            if success:
+                st.success(message)
+            else:
+                st.error(message)
+    
+    with col2:
+        st.subheader("📤 CSV to JSON")
+        csv_files = {
+            "Buku": os.path.join(FOLDER_DB, "buku.csv"),
+            "Anggota": os.path.join(FOLDER_DB, "anggota.csv"),
+            "Peminjaman": os.path.join(FOLDER_DB, "peminjaman.csv"),
+            "Log Hapus Buku": os.path.join(FOLDER_DB, "log_hapus_buku.csv")
+        }
+        
+        pilih_csv = st.selectbox("Pilih File CSV", list(csv_files.keys()))
+        
+        if st.button("Convert ke JSON"):
+            csv_path = csv_files[pilih_csv]
+            json_path = csv_path.replace(".csv", ".json")
+            
+            success, message = csv_to_json(csv_path, json_path)
+            if success:
+                st.success(message)
+            else:
+                st.error(message)

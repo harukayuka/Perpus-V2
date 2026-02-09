@@ -6,40 +6,79 @@ def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 FOLDER_DB = "database"
-FILE_BUKU = os.path.join(FOLDER_DB, "buku.json")
+FOLDER_BUKU = os.path.join(FOLDER_DB, "buku")
+BUKU_CHUNK_SIZE = 20
+LEGACY_FILE_BUKU = os.path.join(FOLDER_DB, "buku.json")
 FILE_LOG_HAPUS = os.path.join(FOLDER_DB, "log_hapus_buku.json")
 FILE_ANGGOTA = os.path.join(FOLDER_DB, "anggota.json")
 FILE_PINJAM = os.path.join(FOLDER_DB, "peminjaman.json")
+
+
+def safe_write_json(path, data):
+    tmp_path = path + ".tmp"
+    with open(tmp_path, "w") as f:
+        json.dump(data, f, indent=4)
+    os.replace(tmp_path, path)
 
 def init_database():
     if not os.path.exists(FOLDER_DB):
         os.makedirs(FOLDER_DB)
 
-    if not os.path.exists(FILE_BUKU):
-        with open(FILE_BUKU, "w") as f:
-            json.dump([], f)
+    if not os.path.exists(FOLDER_BUKU):
+        os.makedirs(FOLDER_BUKU)
+
+    # Buat file legacy jika belum ada, untuk kompatibilitas awal.
+    if not os.path.exists(LEGACY_FILE_BUKU):
+        safe_write_json(LEGACY_FILE_BUKU, [])
 
     if not os.path.exists(FILE_LOG_HAPUS):
-        with open(FILE_LOG_HAPUS, "w") as f:
-            json.dump([], f)
+        safe_write_json(FILE_LOG_HAPUS, [])
 
     if not os.path.exists(FILE_ANGGOTA):
-        with open(FILE_ANGGOTA, "w") as f:
-            json.dump([], f)
+        safe_write_json(FILE_ANGGOTA, [])
 
     if not os.path.exists(FILE_PINJAM):
-        with open(FILE_PINJAM, "w") as f:
-            json.dump([], f)
+        safe_write_json(FILE_PINJAM, [])
 
 
 def load_buku():
-    with open(FILE_BUKU, "r") as f:
-        return json.load(f)
+    data = []
+    if os.path.exists(FOLDER_BUKU):
+        files = [f for f in os.listdir(FOLDER_BUKU) if f.startswith("buku_") and f.endswith(".json")]
+        if files:
+            for name in sorted(files):
+                path = os.path.join(FOLDER_BUKU, name)
+                with open(path, "r") as f:
+                    data.extend(json.load(f))
+            return data
+
+    if os.path.exists(LEGACY_FILE_BUKU):
+        with open(LEGACY_FILE_BUKU, "r") as f:
+            return json.load(f)
+
+    return data
 
 
 def save_buku(data):
-    with open(FILE_BUKU, "w") as f:
-        json.dump(data, f, indent=4)
+    if not os.path.exists(FOLDER_BUKU):
+        os.makedirs(FOLDER_BUKU)
+
+    chunks = [data[i:i + BUKU_CHUNK_SIZE] for i in range(0, len(data), BUKU_CHUNK_SIZE)]
+    existing = [f for f in os.listdir(FOLDER_BUKU) if f.startswith("buku_") and f.endswith(".json")]
+    keep = set()
+
+    for idx, chunk in enumerate(chunks, start=1):
+        name = f"buku_{idx:03d}.json"
+        path = os.path.join(FOLDER_BUKU, name)
+        safe_write_json(path, chunk)
+        keep.add(name)
+
+    for name in existing:
+        if name not in keep:
+            os.remove(os.path.join(FOLDER_BUKU, name))
+
+    # Simpan juga legacy sebagai cadangan minimal data loss.
+    safe_write_json(LEGACY_FILE_BUKU, data)
 
 
 def load_anggota():
