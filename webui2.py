@@ -117,22 +117,44 @@ if menu == "Tambah Buku":
     judul = st.text_input("Judul")
     penulis = st.text_input("Penulis")
     penerbit = st.text_input("Penerbit")
-    tahun = st.number_input("Tahun", min_value=0, step=1)
+    tahun = st.number_input("Tahun Terbit", min_value=0, step=1)
     stok = st.number_input("Stok", min_value=0, step=1)
+    
+    # Sumber pendapatan buku
+    sumber_pendapatan = st.selectbox("Sumber Pendapatan Buku", ["BOSP", "Donatur"])
+    
+    # Conditional fields berdasarkan sumber pendapatan
+    if sumber_pendapatan == "BOSP":
+        tanggal_beli = st.date_input("Tanggal Beli")
+        nama_donatur = ""
+        tanggal_diberikan = None
+    else:  # Donatur
+        nama_donatur = st.text_input("Nama Donatur")
+        tanggal_diberikan = st.date_input("Tanggal Diberikan ke Perpus")
+        tanggal_beli = None
 
     if st.button("Simpan Buku"):
         data = load_data(FILE_BUKU)
         new_id = max([b["id"] for b in data], default=0) + 1
 
-        data.append({
+        buku_baru: Dict[str, Any] = {
             "id": new_id,
             "judul": judul,
             "penulis": penulis,
             "penerbit": penerbit,
-            "tahun": tahun,
+            "tahun_terbit": tahun,
             "stok": stok,
+            "sumber_pendapatan": sumber_pendapatan,
             "created_at": now()
-        })
+        }
+        
+        if sumber_pendapatan == "BOSP":
+            buku_baru["tanggal_beli"] = str(tanggal_beli)
+        else:
+            buku_baru["nama_donatur"] = nama_donatur
+            buku_baru["tanggal_diberikan"] = str(tanggal_diberikan)
+        
+        data.append(buku_baru)
         save_data(FILE_BUKU, data)
         st.success("Buku berhasil ditambahkan!")
 
