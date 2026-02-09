@@ -1,13 +1,14 @@
 import hashlib
 import os
+from typing import Dict, Tuple
 
 
 CONFIG_FILE = "config/config.txt"
 
 
-def load_config():
+def load_config() -> Dict[str, str]:
     """Membaca konfigurasi dari config.txt"""
-    config = {}
+    config: Dict[str, str] = {}
     if not os.path.exists(CONFIG_FILE):
         raise FileNotFoundError(f"{CONFIG_FILE} tidak ditemukan!")
     
@@ -19,7 +20,7 @@ def load_config():
     return config
 
 
-def save_config(config):
+def save_config(config: Dict[str, str]) -> None:
     """Menyimpan konfigurasi ke config.txt"""
     os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
     with open(CONFIG_FILE, "w") as f:
@@ -27,17 +28,17 @@ def save_config(config):
             f.write(f"{key}={value}\n")
 
 
-def hash_password(password):
+def hash_password(password: str) -> str:
     """Mengubah password menjadi hash SHA256"""
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-def check_password(password, password_hash):
+def check_password(password: str, password_hash: str) -> bool:
     """Memverifikasi password dengan hash"""
     return hash_password(password) == password_hash
 
 
-def ganti_password(password_lama, password_baru, password_baru_confirm):
+def ganti_password(password_lama: str, password_baru: str, password_baru_confirm: str) -> Tuple[bool, str]:
     """
     Fungsi untuk mengganti password
     

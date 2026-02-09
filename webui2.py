@@ -1,15 +1,16 @@
-import streamlit as st
+import streamlit as st  # type: ignore[import-untyped]
 import json
 import os
 from datetime import datetime
 import hashlib
+from typing import Dict, List, Any, Union
 from ganti_password import ganti_password
 from converter import json_to_csv, csv_to_json, load_csv, save_csv
 
 
-def load_variabel():
+def load_variabel() -> Dict[str, str]:
     """Load variabel dari file variabel.txt"""
-    variabel = {}
+    variabel: Dict[str, str] = {}
     if not os.path.exists("variabel.txt"):
         st.error("variabel.txt tidak ditemukan!")
         st.stop()
@@ -22,15 +23,15 @@ def load_variabel():
     return variabel
 
 
-var = load_variabel()
-FOLDER_DB = var.get("FOLDER_DB", "database")
-FILE_BUKU = var.get("FILE_BUKU", "database/buku.csv")
-FILE_ANGGOTA = var.get("FILE_ANGGOTA", "database/anggota.csv")
-FILE_PINJAM = var.get("FILE_PINJAM", "database/peminjaman.csv")
-FILE_LOG_HAPUS = var.get("FILE_LOG_HAPUS", "database/log_hapus_buku.csv")
+var: Dict[str, str] = load_variabel()
+FOLDER_DB: str = var.get("FOLDER_DB", "database")
+FILE_BUKU: str = var.get("FILE_BUKU", "database/buku.csv")
+FILE_ANGGOTA: str = var.get("FILE_ANGGOTA", "database/anggota.csv")
+FILE_PINJAM: str = var.get("FILE_PINJAM", "database/peminjaman.csv")
+FILE_LOG_HAPUS: str = var.get("FILE_LOG_HAPUS", "database/log_hapus_buku.csv")
 
-def load_config():
-    config = {}
+def load_config() -> Dict[str, str]:
+    config: Dict[str, str] = {}
     if not os.path.exists("config/config.txt"):
         st.error("config.txt tidak ditemukan!")
         st.stop()
@@ -43,36 +44,36 @@ def load_config():
     return config
 
 
-config = load_config()
-PASSWORD_HASH = config.get("PASSWORD_HASH")
+config: Dict[str, str] = load_config()
+PASSWORD_HASH: Union[str, None] = config.get("PASSWORD_HASH")
 
 
-def check_password(password):
+def check_password(password: str) -> bool:
     return hashlib.sha256(password.encode()).hexdigest() == PASSWORD_HASH
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+if "logged_in" not in st.session_state:  # type: ignore[attr-defined]
+    st.session_state.logged_in = False  # type: ignore[attr-defined]
 
 
-if not st.session_state.logged_in:
-    st.title("🔐 Login Sistem Perpustakaan")
-    pwd = st.text_input("Masukkan Password", type="password")
+if not st.session_state.logged_in:  # type: ignore[attr-defined]
+    st.title("🔐 Login Sistem Perpustakaan")  # type: ignore[attr-defined]
+    pwd = st.text_input("Masukkan Password", type="password")  # type: ignore[attr-defined]
 
-    if st.button("Login"):
-        if check_password(pwd):
-            st.session_state.logged_in = True
-            st.success("Login berhasil!")
-            st.rerun()
+    if st.button("Login"):  # type: ignore[attr-defined]
+        if check_password(pwd):  # type: ignore[arg-type]
+            st.session_state.logged_in = True  # type: ignore[attr-defined]
+            st.success("Login berhasil!")  # type: ignore[attr-defined]
+            st.rerun()  # type: ignore[attr-defined]
         else:
-            st.error("Password salah!")
+            st.error("Password salah!")  # type: ignore[attr-defined]
 
-    st.stop()
+    st.stop()  # type: ignore[attr-defined]
 
-def now():
+def now() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def load_data(file):
+def load_data(file: str) -> List[Dict[str, Any]]:
     if not os.path.exists(file):
         return []
     # Jika file CSV
@@ -84,7 +85,7 @@ def load_data(file):
             return json.load(f)
 
 
-def save_data(file, data):
+def save_data(file: str, data: List[Dict[str, Any]]) -> None:
     # Jika file CSV
     if file.endswith('.csv'):
         save_csv(file, data)
@@ -94,9 +95,9 @@ def save_data(file, data):
             json.dump(data, f, indent=4)
 
 
-st.title("📚 Sistem Perpustakaan")
+st.title("📚 Sistem Perpustakaan")  # type: ignore[attr-defined]
 
-menu = st.sidebar.selectbox("Menu", [
+menu = st.sidebar.selectbox("Menu", [  # type: ignore[attr-defined]
     "Tambah Buku",
     "Daftar Buku",
     "Tambah Siswa",
