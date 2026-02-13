@@ -4,6 +4,8 @@ import os
 from datetime import datetime
 import hashlib
 from typing import Dict, List, Any, Union
+import pandas as pd
+from PIL import Image
 from ganti_password import ganti_password
 from converter import json_to_csv, csv_to_json, load_csv, save_csv
 
@@ -11,15 +13,29 @@ from converter import json_to_csv, csv_to_json, load_csv, save_csv
 def load_variabel() -> Dict[str, str]:
     """Load variabel dari file variabel.txt"""
     variabel: Dict[str, str] = {}
+    
+    # Default values
+    default_variabel = {
+        "FOLDER_DB": "database",
+        "FILE_BUKU": "database/buku.csv",
+        "FILE_ANGGOTA": "database/anggota.csv",
+        "FILE_PINJAM": "database/peminjaman.csv",
+        "FILE_LOG_HAPUS": "database/log_hapus_buku.csv"
+    }
+    
     if not os.path.exists("variabel.txt"):
-        st.error("variabel.txt tidak ditemukan!")
-        st.stop()
+        # Create default variabel.txt jika belum ada
+        with open("variabel.txt", "w") as f:
+            for key, value in default_variabel.items():
+                f.write(f"{key}={value}\n")
+        return default_variabel
     
     with open("variabel.txt", "r") as f:
         for line in f:
             if "=" in line and not line.strip().startswith("#"):
                 key, value = line.strip().split("=", 1)
                 variabel[key.strip()] = value.strip()
+    
     return variabel
 
 
@@ -95,20 +111,95 @@ def save_data(file: str, data: List[Dict[str, Any]]) -> None:
             json.dump(data, f, indent=4)
 
 
+def save_cover(uploaded_file: Any, book_id: int) -> str:
+    """
+    Save cover buku dengan konversi ke format WebP
+    
+    Args:
+        uploaded_file: File upload dari Streamlit
+        book_id: ID buku untuk nama file
+    
+    Returns:
+        str: Path file cover yang disimpan
+    """
+    try:
+        # Buat folder covers jika belum ada
+        cover_folder = os.path.join(FOLDER_DB, "covers")
+        os.makedirs(cover_folder, exist_ok=True)
+        
+        # Buka gambar
+        img = Image.open(uploaded_file)
+        
+        # Konversi ke RGB jika perlu (untuk format yang tidak support transparansi)
+        if img.mode in ('RGBA', 'LA', 'P'):
+            rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+            rgb_img.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+            img = rgb_img
+        
+        # Simpan sebagai WebP
+        cover_path = os.path.join(cover_folder, f"cover_{book_id}.webp")
+        img.save(cover_path, "WEBP", quality=85)
+        
+        # Return relative path untuk disimpan di database
+        return os.path.join("covers", f"cover_{book_id}.webp")
+    
+    except Exception as e:
+        print(f"Error saving cover: {e}")
+        return ""
+
+
 st.title("📚 Sistem Perpustakaan")  # type: ignore[attr-defined]
 
-menu = st.sidebar.selectbox("Menu", [  # type: ignore[attr-defined]
-    "Tambah Buku",
-    "Daftar Buku",
-    "Tambah Siswa",
-    "Daftar Siswa",
-    "Pinjam Buku",
-    "Kembalikan Buku",
-    "Data Peminjaman",
-    "Log Hapus Buku",
-    "Ganti Password",
-    "JSON to CSV"
-])
+# Initialize session state untuk menu
+if "menu" not in st.session_state:  # type: ignore[attr-defined]
+    st.session_state.menu = "Daftar Buku"  # type: ignore[attr-defined]
+
+# Sidebar menu buttons
+st.sidebar.title("📖 Menu")  # type: ignore[attr-defined]
+if st.sidebar.button("➕ Tambah Buku"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Tambah Buku"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("📚 Daftar Buku"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Daftar Buku"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("➕ Tambah Siswa"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Tambah Siswa"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("👥 Daftar Siswa"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Daftar Siswa"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("🔄 Pinjam Buku"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Pinjam Buku"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("↩️ Kembalikan Buku"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Kembalikan Buku"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("📋 Data Peminjaman"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Data Peminjaman"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("🗑️ Log Hapus Buku"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Log Hapus Buku"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("🔐 Ganti Password"):  # type: ignore[attr-defined]
+    st.session_state.menu = "Ganti Password"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+if st.sidebar.button("📊 JSON to CSV"):  # type: ignore[attr-defined]
+    st.session_state.menu = "JSON to CSV"  # type: ignore[attr-defined]
+    st.rerun()  # type: ignore[attr-defined]
+
+st.sidebar.markdown("---")  # type: ignore[attr-defined]
+
+# Get menu dari session state
+menu = st.session_state.menu  # type: ignore[attr-defined]
 
 # ================= TAMBAH BUKU =================
 if menu == "Tambah Buku":
@@ -132,6 +223,10 @@ if menu == "Tambah Buku":
         nama_donatur = st.text_input("Nama Donatur")
         tanggal_diberikan = st.date_input("Tanggal Diberikan ke Perpus")
         tanggal_beli = None
+    
+    # Upload cover buku
+    st.markdown("**📸 Upload Cover Buku**")
+    cover_file = st.file_uploader("Pilih file gambar (akan otomatis konversi ke WebP)", type=["jpg", "jpeg", "png", "gif", "webp", "bmp"])
 
     if st.button("Simpan Buku"):
         data = load_data(FILE_BUKU)
@@ -148,6 +243,12 @@ if menu == "Tambah Buku":
             "created_at": now()
         }
         
+        # Save cover jika ada
+        if cover_file:
+            cover_path = save_cover(cover_file, new_id)
+            if cover_path:
+                buku_baru["cover"] = cover_path
+        
         if sumber_pendapatan == "BOSP":
             buku_baru["tanggal_beli"] = str(tanggal_beli)
         else:
@@ -162,7 +263,51 @@ if menu == "Tambah Buku":
 elif menu == "Daftar Buku":
     st.header("Daftar Buku")
     data = load_data(FILE_BUKU)
-    st.dataframe(data)
+    
+    if not data:
+        st.info("Belum ada data buku")
+    else:
+        # Tampilkan dalam format card dengan cover
+        for buku in data:
+            col1, col2 = st.columns([1, 3])  # type: ignore[attr-defined]
+            
+            with col1:
+                # Tampilkan cover buku
+                cover_path = buku.get("cover", "")
+                if cover_path and os.path.exists(os.path.join(FOLDER_DB, cover_path)):
+                    try:
+                        img = Image.open(os.path.join(FOLDER_DB, cover_path))
+                        st.image(img, width=150)  # type: ignore[attr-defined]
+                    except Exception as e:
+                        st.write("📕 (Cover tidak bisa dibaca)")
+                else:
+                    st.write("📕 (Belum ada cover)")
+            
+            with col2:
+                # Tampilkan informasi buku
+                st.subheader(buku.get("judul", "-"))  # type: ignore[attr-defined]
+                col_a, col_b = st.columns(2)  # type: ignore[attr-defined]
+                
+                with col_a:
+                    st.write(f"**Penulis:** {buku.get('penulis', '-')}")
+                    st.write(f"**Penerbit:** {buku.get('penerbit', '-')}")
+                    st.write(f"**Tahun Terbit:** {buku.get('tahun_terbit', '-')}")
+                    st.write(f"**Stok:** {buku.get('stok', 0)}")
+                
+                with col_b:
+                    sumber = buku.get("sumber_pendapatan", "-")
+                    st.write(f"**Sumber Pendapatan:** {sumber}")
+                    
+                    if sumber == "BOSP":
+                        tanggal = buku.get("tanggal_beli", "-")
+                        st.write(f"**Tanggal Beli:** {tanggal}")
+                    else:
+                        donatur = buku.get("nama_donatur", "-")
+                        tanggal = buku.get("tanggal_diberikan", "-")
+                        st.write(f"**Donatur:** {donatur}")
+                        st.write(f"**Tanggal Diberikan:** {tanggal}")
+            
+            st.divider()  # type: ignore[attr-defined]
 
 # ================= TAMBAH SISWA =================
 elif menu == "Tambah Siswa":
@@ -191,7 +336,9 @@ elif menu == "Tambah Siswa":
 elif menu == "Daftar Siswa":
     st.header("Daftar Siswa")
     data = load_data(FILE_ANGGOTA)
-    st.dataframe(data)
+    # Sembunyikan kolom ID
+    df = pd.DataFrame(data)
+    st.dataframe(df.drop(columns=['id']), width='stretch')
 
 # ================= PINJAM =================
 elif menu == "Pinjam Buku":
@@ -258,12 +405,18 @@ elif menu == "Kembalikan Buku":
 # ================= DATA PEMINJAMAN =================
 elif menu == "Data Peminjaman":
     st.header("Semua Transaksi")
-    st.dataframe(load_data(FILE_PINJAM))
+    data = load_data(FILE_PINJAM)
+    # Sembunyikan kolom ID
+    df = pd.DataFrame(data)
+    st.dataframe(df.drop(columns=['id']), width='stretch')
 
 # ================= LOG HAPUS =================
 elif menu == "Log Hapus Buku":
     st.header("Log Penghapusan Buku")
-    st.dataframe(load_data(FILE_LOG_HAPUS))
+    data = load_data(FILE_LOG_HAPUS)
+    # Sembunyikan kolom ID
+    df = pd.DataFrame(data)
+    st.dataframe(df.drop(columns=['id']), width='stretch')
 
 # ================= GANTI PASSWORD =================
 elif menu == "Ganti Password":

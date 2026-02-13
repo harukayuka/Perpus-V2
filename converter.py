@@ -59,17 +59,21 @@ def csv_to_json(csv_file: str, json_file: str) -> Tuple[bool, str]:
         if not os.path.exists(csv_file):
             return False, f"File {csv_file} tidak ditemukan!"
         
+        # Define numeric columns
+        numeric_columns = {'id', 'stok', 'tahun_terbit', 'tahun', 'nis'}
+        
         data: List[Dict[str, Any]] = []
         with open(csv_file, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                # Hanya konversi kolom 'id' ke integer
+                # Convert known numeric columns
                 row_cleaned: Dict[str, Any] = {}
                 if row:
                     for key, value in row.items():
                         key_str: str = str(key) if key else ""
                         value_str: str = str(value) if value else ""
-                        if key_str == 'id':
+                        
+                        if key_str in numeric_columns:
                             try:
                                 row_cleaned[key_str] = int(value_str)
                             except (ValueError, TypeError):
@@ -95,27 +99,30 @@ def load_csv(file: str) -> List[Dict[str, Any]]:
         if not os.path.exists(file):
             return []
         
+        # Define numeric columns
+        numeric_columns = {'id', 'stok', 'tahun_terbit', 'tahun', 'nis'}
+        
         data: List[Dict[str, Any]] = []
         with open(file, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                # Smart type conversion: try to convert numeric-looking strings
+                # Smart type conversion: only convert known numeric columns
                 row_cleaned: Dict[str, Any] = {}
                 if row:
                     for key, value in row.items():
                         key_str: str = str(key) if key else ""
                         value_str: str = str(value) if value else ""
                         
-                        # Try to convert to int first
-                        try:
-                            row_cleaned[key_str] = int(value_str)
-                        except (ValueError, TypeError):
-                            # Try to convert to float
+                        # Only try to convert if in numeric columns list
+                        if key_str in numeric_columns:
                             try:
-                                row_cleaned[key_str] = float(value_str)
+                                row_cleaned[key_str] = int(value_str)
                             except (ValueError, TypeError):
-                                # Keep as string if not numeric
+                                # Keep as string if conversion fails
                                 row_cleaned[key_str] = value_str
+                        else:
+                            # Keep all other columns as string
+                            row_cleaned[key_str] = value_str
                 data.append(row_cleaned)
         return data
     except Exception as e:
