@@ -1,0 +1,19 @@
+[
+    {
+        "id": 1,
+        "id_buku": 1,
+        "judul": "Laskar Pelangi",
+        "id_anggota": 1,
+        "nama": "m.fatih alayyubi",
+        "status": "dikembalikan"
+    },
+    {
+        "id": 2,
+        "id_buku": 2,
+        "judul": "Bumi Manusia",
+        "id_anggota": 2,
+        "nama": "Andi Pratama",
+        "status": "dikembalikan",
+        "tanggal_kembali": "2026-02-05 11:49:47"
+    }
+]

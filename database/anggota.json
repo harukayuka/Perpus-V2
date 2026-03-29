@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "nama": "m.fatih alayyubi",
+        "kelas": "12",
+        "nis": "000000000"
+    },
+    {
+        "id": 2,
+        "nama": "Andi Pratama",
+        "kelas": "X IPA 1",
+        "nis": "202301"
+    },
+    {
+        "id": 3,
+        "nama": "Siti Aisyah",
+        "kelas": "X IPA 2",
+        "nis": "202302"
+    },
+    {
+        "id": 4,
+        "nama": "Rafi Ahmad",
+        "kelas": "XI IPS 1",
+        "nis": "202303"
+    }
+]

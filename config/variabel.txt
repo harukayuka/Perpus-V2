@@ -1,0 +1,5 @@
+FOLDER_DB=database
+FILE_BUKU=database/buku.csv
+FILE_ANGGOTA=database/anggota.csv
+FILE_PINJAM=database/peminjaman.csv
+FILE_LOG_HAPUS=database/log_hapus_buku.csv

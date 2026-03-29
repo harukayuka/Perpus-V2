@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "judul": "Laskar Pelangi",
+        "penulis": "Andrea Hirata",
+        "penerbit": "Bentang Pustaka",
+        "tahun": 2005,
+        "stok": 1
+    },
+    {
+        "id": 2,
+        "judul": "Bumi Manusia",
+        "penulis": "Pramoedya A. Toer",
+        "penerbit": "Hasta Mitra",
+        "tahun": 1980,
+        "stok": 1
+    },
+    {
+        "id": 3,
+        "judul": "Negeri 5 Menara",
+        "penulis": "Ahmad Fuadi",
+        "penerbit": "Gramedia",
+        "tahun": 2009,
+        "stok": 1
+    }
+]

@@ -1,0 +1,11 @@
+{
+  "typeCheckingMode": "standard",
+  "reportMissingImports": false,
+  "reportUnknownMemberType": false,
+  "reportUnknownVariableType": false,
+  "reportUnknownArgumentType": false,
+  "reportUnknownParameterType": false,
+  "exclude": ["venv", ".venv", "node_modules"],
+  "typeshedPath": "",
+  "pythonVersion": "3.8"
+}
