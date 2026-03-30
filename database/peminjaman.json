@@ -4,16 +4,29 @@
         "id_buku": 1,
         "judul": "Laskar Pelangi",
         "id_anggota": 1,
-        "nama": "m.fatih alayyubi",
-        "status": "dikembalikan"
+        "nama": "Budi Santoso",
+        "status": "dipinjam",
+        "tanggal_pinjam": "2026-03-30 13:47:53",
+        "tanggal_kembali": ""
     },
     {
         "id": 2,
         "id_buku": 2,
         "judul": "Bumi Manusia",
         "id_anggota": 2,
-        "nama": "Andi Pratama",
+        "nama": "Siti Aminah",
         "status": "dikembalikan",
-        "tanggal_kembali": "2026-02-05 11:49:47"
+        "tanggal_pinjam": "2024-03-01 10:00:00",
+        "tanggal_kembali": "2024-03-05 14:30:00"
+    },
+    {
+        "id": 3,
+        "id_buku": 3,
+        "judul": "Filosofi Teras",
+        "id_anggota": 3,
+        "nama": "Andi Wijaya",
+        "status": "dipinjam",
+        "tanggal_pinjam": "2026-03-30 13:47:53",
+        "tanggal_kembali": ""
     }
 ]

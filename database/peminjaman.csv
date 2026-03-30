@@ -1,2 +1,4 @@
-id,id_buku,judul,id_anggota,nama,status
-1,1,Laskar Pelangi,1,m.fatih alayyubi,dikembalikan
+id,id_anggota,id_buku,judul,nama,status,tanggal_kembali,tanggal_pinjam
+1,1,1,Laskar Pelangi,Budi Santoso,dipinjam,,2026-03-30 13:47:53
+2,2,2,Bumi Manusia,Siti Aminah,dikembalikan,2024-03-05 14:30:00,2024-03-01 10:00:00
+3,3,3,Filosofi Teras,Andi Wijaya,dipinjam,,2026-03-30 13:47:53

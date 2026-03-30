@@ -1,5 +1,4 @@
-id,nama,kelas,nis
-1,m.fatih alayyubi,12,000000000
-2,Andi Pratama,X IPA 1,202301
-3,Siti Aisyah,X IPA 2,202302
-4,Rafi Ahmad,XI IPS 1,202303
+id,kelas,nama,nis
+1,X IPA 1,Budi Santoso,10001
+2,XI IPS 2,Siti Aminah,10002
+3,XII IPA 3,Andi Wijaya,10003

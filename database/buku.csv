@@ -1,4 +1,4 @@
-id,judul,penulis,penerbit,tahun,stok
-1,Laskar Pelangi,Andrea Hirata,Bentang Pustaka,2005,1
-2,Bumi Manusia,Pramoedya A. Toer,Hasta Mitra,1980,1
-3,Negeri 5 Menara,Ahmad Fuadi,Gramedia,2009,1
+created_at,id,judul,kategori,nama_donatur,penerbit,penulis,stok,sumber_pendapatan,tahun_terbit,tanggal_beli,tanggal_diberikan
+2026-03-30 13:47:53,1,Laskar Pelangi,Novel,,Bentang Pustaka,Andrea Hirata,5,BOSP,2005,2023-01-15,
+2026-03-30 13:47:53,2,Bumi Manusia,Sastra,Alumni 90,Hasta Mitra,Pramoedya Ananta Toer,3,Donatur,1980,,2023-05-20
+2026-03-30 13:47:53,3,Filosofi Teras,Self Improvement,,Kompas,Henry Manampiring,7,BOSP,2018,2024-02-10,
