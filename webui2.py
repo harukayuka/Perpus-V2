@@ -504,7 +504,7 @@ elif menu == "Daftar Siswa":
     else:
         # Sembunyikan kolom ID
         df = pd.DataFrame(data)
-        st.dataframe(df.drop(columns=['id']), use_container_width=True)
+        st.dataframe(df.drop(columns=['id']) if 'id' in df.columns else df, use_container_width=True)
 
 # ================= PINJAM =================
 elif menu == "Pinjam Buku":
@@ -588,7 +588,7 @@ elif menu == "Data Peminjaman":
     else:
         # Sembunyikan kolom ID
         df = pd.DataFrame(data)
-        st.dataframe(df.drop(columns=['id']), use_container_width=True)
+        st.dataframe(df.drop(columns=['id']) if 'id' in df.columns else df, use_container_width=True)
         
         # Export ke CSV
         if st.button("📥 Export ke CSV"):
@@ -652,7 +652,7 @@ elif menu == "Riwayat Anggota":
             else:
                 st.subheader(f"Riwayat: {selected['nama']} ({selected['kelas']})")
                 df = pd.DataFrame(riwayat)
-                st.dataframe(df.drop(columns=['id']), use_container_width=True)
+                st.dataframe(df.drop(columns=['id']) if 'id' in df.columns else df, use_container_width=True)
 
 # ================= LOG HAPUS =================
 elif menu == "Log Hapus Buku":
@@ -663,7 +663,7 @@ elif menu == "Log Hapus Buku":
     else:
         # Sembunyikan kolom ID
         df = pd.DataFrame(data)
-        st.dataframe(df.drop(columns=['id']), use_container_width=True)
+        st.dataframe(df.drop(columns=['id']) if 'id' in df.columns else df, use_container_width=True)
 
 # ================= GANTI PASSWORD =================
 elif menu == "Ganti Password":
