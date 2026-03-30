@@ -1,4 +1,4 @@
-created_at,id,judul,kategori,nama_donatur,penerbit,penulis,stok,sumber_pendapatan,tahun_terbit,tanggal_beli,tanggal_diberikan
-2026-03-30 13:47:53,1,Laskar Pelangi,Novel,,Bentang Pustaka,Andrea Hirata,5,BOSP,2005,2023-01-15,
-2026-03-30 13:47:53,2,Bumi Manusia,Sastra,Alumni 90,Hasta Mitra,Pramoedya Ananta Toer,3,Donatur,1980,,2023-05-20
-2026-03-30 13:47:53,3,Filosofi Teras,Self Improvement,,Kompas,Henry Manampiring,7,BOSP,2018,2024-02-10,
+cover,created_at,id,judul,kategori,nama_donatur,penerbit,penulis,stok,sumber_pendapatan,tahun_terbit,tanggal_beli,tanggal_diberikan
+covers/cover_1.webp,2026-03-30 13:47:53,1,Laskar Pelangi,Novel,,Bentang Pustaka,Andrea Hirata,5,BOSP,2005,2023-01-15,
+covers/cover_2.webp,2026-03-30 13:47:53,2,Bumi Manusia,Sastra,Alumni 90,Hasta Mitra,Pramoedya Ananta Toer,3,Donatur,1980,,2023-05-20
+covers/cover_3.webp,2026-03-30 13:47:53,3,Filosofi Teras,Self Improvement,,Kompas,Henry Manampiring,7,BOSP,2018,2024-02-10,
