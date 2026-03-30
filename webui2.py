@@ -6,6 +6,7 @@ import hashlib
 from typing import Dict, List, Any, Union
 import pandas as pd
 from PIL import Image
+from io import BytesIO
 from ganti_password import ganti_password
 from converter import json_to_csv, csv_to_json, load_csv, save_csv
 
@@ -177,6 +178,28 @@ def save_kategori(data: List[Dict[str, Any]]) -> None:
             json.dump(data, f, indent=4, ensure_ascii=False)
     except Exception as e:
         print(f"Error saving kategori: {e}")
+
+
+def export_to_excel(df: pd.DataFrame, sheet_name: str = "Data") -> BytesIO:
+    """
+    Konversi DataFrame ke format Excel (.xlsx) dalam BytesIO
+    
+    Args:
+        df: DataFrame yang akan dikonversi
+        sheet_name: Nama sheet di Excel
+    
+    Returns:
+        BytesIO: File Excel dalam format binary
+    """
+    try:
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+        output.seek(0)
+        return output
+    except Exception as e:
+        print(f"Error exporting to Excel: {e}")
+        return BytesIO()
 
 
 st.set_page_config(page_title="📚 Sistem Perpustakaan", layout="wide")  # type: ignore[attr-defined]
@@ -401,6 +424,20 @@ elif menu == "Daftar Buku":
     if not data:
         st.info("Belum ada data buku")
     else:
+        # Tombol unduh Excel
+        col_export = st.columns([1, 4])
+        with col_export[0]:
+            df_export = pd.DataFrame(data)
+            excel_file = export_to_excel(df_export, sheet_name="Daftar Buku")
+            st.download_button(
+                label="📥 Unduh Excel",
+                data=excel_file,
+                file_name=f"daftar_buku_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+        
+        st.divider()
+        
         # Tampilkan dalam format card dengan cover
         for buku in data:
             col1, col2 = st.columns([1, 3])
@@ -561,6 +598,20 @@ elif menu == "Daftar Siswa":
     if not data:
         st.info("Belum ada data siswa")
     else:
+        # Tombol unduh Excel
+        col_export = st.columns([1, 4])
+        with col_export[0]:
+            df_export = pd.DataFrame(data)
+            excel_file = export_to_excel(df_export, sheet_name="Daftar Siswa")
+            st.download_button(
+                label="📥 Unduh Excel",
+                data=excel_file,
+                file_name=f"daftar_siswa_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+        
+        st.divider()
+        
         # Sembunyikan kolom ID
         df = pd.DataFrame(data)
         st.dataframe(df.drop(columns=['id']) if 'id' in df.columns else df, use_container_width=True)
@@ -645,19 +696,32 @@ elif menu == "Data Peminjaman":
     if not data:
         st.info("Belum ada data peminjaman")
     else:
-        # Sembunyikan kolom ID
-        df = pd.DataFrame(data)
-        st.dataframe(df.drop(columns=['id']) if 'id' in df.columns else df, use_container_width=True)
-        
-        # Export ke CSV
-        if st.button("📥 Export ke CSV"):
-            csv_data = df.to_csv(index=False)
+        # Tombol unduh Excel dan CSV
+        col_export1, col_export2 = st.columns(2)
+        with col_export1:
+            df_export = pd.DataFrame(data)
+            excel_file = export_to_excel(df_export, sheet_name="Data Peminjaman")
             st.download_button(
-                label="Download CSV",
+                label="📥 Unduh Excel",
+                data=excel_file,
+                file_name=f"peminjaman_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+        
+        with col_export2:
+            csv_data = df_export.to_csv(index=False)
+            st.download_button(
+                label="📥 Unduh CSV",
                 data=csv_data,
                 file_name=f"peminjaman_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                 mime="text/csv"
             )
+        
+        st.divider()
+        
+        # Sembunyikan kolom ID
+        df = pd.DataFrame(data)
+        st.dataframe(df.drop(columns=['id']) if 'id' in df.columns else df, use_container_width=True)
 
 # ================= BUKU TERLAMBAT =================
 elif menu == "Buku Terlambat":
