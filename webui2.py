@@ -179,70 +179,85 @@ def save_kategori(data: List[Dict[str, Any]]) -> None:
         print(f"Error saving kategori: {e}")
 
 
+st.set_page_config(page_title="📚 Sistem Perpustakaan", layout="wide")  # type: ignore[attr-defined]
 st.title("📚 Sistem Perpustakaan")  # type: ignore[attr-defined]
 
 # Initialize session state untuk menu
 if "menu" not in st.session_state:  # type: ignore[attr-defined]
     st.session_state.menu = "Dashboard"  # type: ignore[attr-defined]
 
-# Sidebar menu buttons
-st.sidebar.title("📖 Menu")  # type: ignore[attr-defined]
+# Sidebar menu dengan kategori
+st.sidebar.title("📖 Menu Utama")  # type: ignore[attr-defined]
 
-if st.sidebar.button("📊 Dashboard"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Dashboard"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
+# ================= DASHBOARD & STATISTIK =================
+with st.sidebar.expander("📊 Dashboard & Statistik", expanded=True):  # type: ignore[attr-defined]
+    if st.button("📊 Dashboard"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Dashboard"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
 
-if st.sidebar.button("➕ Tambah Buku"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Tambah Buku"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
+# ================= MANAJEMEN BUKU =================
+with st.sidebar.expander("📚 Manajemen Buku", expanded=False):  # type: ignore[attr-defined]
+    if st.button("➕ Tambah Buku"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Tambah Buku"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("📚 Daftar Buku"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Daftar Buku"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("🔍 Cari Buku"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Cari Buku"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("🗑️ Hapus Buku"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Hapus Buku"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("📋 Log Hapus Buku"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Log Hapus Buku"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
 
-if st.sidebar.button("📚 Daftar Buku"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Daftar Buku"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
+# ================= MANAJEMEN SISWA =================
+with st.sidebar.expander("👥 Manajemen Siswa", expanded=False):  # type: ignore[attr-defined]
+    if st.button("➕ Tambah Siswa"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Tambah Siswa"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("👥 Daftar Siswa"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Daftar Siswa"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("📜 Riwayat Peminjaman"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Riwayat Anggota"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
 
-if st.sidebar.button("🔍 Cari Buku"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Cari Buku"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
+# ================= TRANSAKSI PERPUSTAKAAN =================
+with st.sidebar.expander("🔄 Transaksi Perpustakaan", expanded=False):  # type: ignore[attr-defined]
+    if st.button("🔄 Pinjam Buku"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Pinjam Buku"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("↩️ Kembalikan Buku"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Kembalikan Buku"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("📋 Data Peminjaman"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Data Peminjaman"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("⏰ Buku Terlambat"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Buku Terlambat"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
 
-if st.sidebar.button("➕ Tambah Siswa"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Tambah Siswa"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("👥 Daftar Siswa"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Daftar Siswa"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("🔄 Pinjam Buku"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Pinjam Buku"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("↩️ Kembalikan Buku"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Kembalikan Buku"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("📋 Data Peminjaman"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Data Peminjaman"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("⏰ Buku Terlambat"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Buku Terlambat"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("📜 Riwayat Anggota"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Riwayat Anggota"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("🗑️ Log Hapus Buku"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Log Hapus Buku"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("🔐 Ganti Password"):  # type: ignore[attr-defined]
-    st.session_state.menu = "Ganti Password"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
-
-if st.sidebar.button("📊 JSON to CSV"):  # type: ignore[attr-defined]
-    st.session_state.menu = "JSON to CSV"  # type: ignore[attr-defined]
-    st.rerun()  # type: ignore[attr-defined]
+# ================= PENGATURAN & ALAT =================
+with st.sidebar.expander("⚙️ Pengaturan & Alat", expanded=False):  # type: ignore[attr-defined]
+    if st.button("🔐 Ganti Password"):  # type: ignore[attr-defined]
+        st.session_state.menu = "Ganti Password"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
+    
+    if st.button("📊 JSON to CSV"):  # type: ignore[attr-defined]
+        st.session_state.menu = "JSON to CSV"  # type: ignore[attr-defined]
+        st.rerun()  # type: ignore[attr-defined]
 
 st.sidebar.markdown("---")  # type: ignore[attr-defined]
 
@@ -469,6 +484,50 @@ elif menu == "Cari Buku":
                 
                 st.divider()  # type: ignore[attr-defined]
 
+# ================= HAPUS BUKU =================
+elif menu == "Hapus Buku":
+    st.header("🗑️ Hapus Buku")
+    
+    data = load_data(FILE_BUKU)
+    
+    if not data:
+        st.warning("Tidak ada buku untuk dihapus.")
+    else:
+        buku_options = {f"[{b['id']}] {b['judul']} - {b['penulis']}": b for b in data}
+        pilih_buku = st.selectbox("Pilih buku yang ingin dihapus", list(buku_options.keys()))
+        
+        buku_dipilih = buku_options[pilih_buku]
+        
+        st.info(f"**Buku yang dipilih:** {buku_dipilih['judul']}")
+        st.write(f"Penulis: {buku_dipilih['penulis']}")
+        st.write(f"Penerbit: {buku_dipilih['penerbit']}")
+        
+        alasan = st.text_area("Masukkan alasan penghapusan buku")
+        
+        if st.button("Hapus Buku"):
+            if not alasan:
+                st.error("Alasan tidak boleh kosong!")
+            else:
+                # Hapus dari daftar buku
+                data = [b for b in data if b["id"] != buku_dipilih["id"]]
+                save_data(FILE_BUKU, data)
+                
+                # Simpan log penghapusan
+                try:
+                    log_data = load_data(FILE_LOG_HAPUS)
+                    log_data.append({
+                        "id": len(log_data) + 1,
+                        "id_buku": buku_dipilih["id"],
+                        "judul": buku_dipilih["judul"],
+                        "alasan": alasan,
+                        "deleted_at": now()
+                    })
+                    save_data(FILE_LOG_HAPUS, log_data)
+                except Exception as e:
+                    st.error(f"Error saving log: {e}")
+                
+                st.success("Buku berhasil dihapus dan alasan dicatat.")
+
 # ================= TAMBAH SISWA =================
 elif menu == "Tambah Siswa":
     st.header("Tambah Siswa")
@@ -541,7 +600,7 @@ elif menu == "Pinjam Buku":
                     "nama": s["nama"],
                     "status": "dipinjam",
                     "tanggal_pinjam": now(),
-                    "tanggal_kembali": None
+                    "tanggal_kembali": ""
                 })
 
                 for bk in buku:
