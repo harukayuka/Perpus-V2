@@ -2,6 +2,9 @@
 
 Sistem manajemen perpustakaan yang lengkap dengan antarmuka CLI dan web UI berbasis Streamlit.
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1DANhbHFjaie5h_8UZdMxwJBZlRFAmgal)
+
+
 ## Fitur Utama
 
 - **Manajemen Buku**: Tambah, lihat, dan hapus buku dengan tracking stok
